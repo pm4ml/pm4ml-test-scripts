@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f4ee8e3e-fd6e-4ab8-8991-a5144e633bf7",
+		"_postman_id": "35d285cb-ae09-4223-87a9-27447526429e",
 		"name": "Onboard-Generic-FSP-Sim_Backend",
 		"description": "Author: Sridevi Miriyala \nPurpose: Used to add new FSP and relevant Callback Information",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -120,6 +120,151 @@
 							]
 						},
 						"description": "Create a party in payeefsp. So that GET /parties can be successful."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "register_msisdn_to_oracle",
+			"item": [
+				{
+					"name": "Register {{DFSP_MSISDN}} in MSISDN Oracle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.interoperability.participants+json;version=1"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.interoperability.participants+json;version=1.0"
+							},
+							{
+								"key": "Date",
+								"value": ""
+							},
+							{
+								"key": "FSPIOP-Source",
+								"value": "hub_operator"
+							},
+							{
+								"key": "Postman-Token",
+								"value": "7aa4c9f3-1738-49f0-8904-7821e2336692,4127ff87-7d17-483c-8e3e-f0b562a16d84"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.11.0"
+							},
+							{
+								"key": "accept-encoding",
+								"value": "gzip, deflate"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"currency\": \"{{DFSP_CURRENCY}}\"\n}"
+						},
+						"url": {
+							"raw": "{{MSISDN_ORACLE_ENDPOINT}}/participants/MSISDN/{{DFSP_MSISDN}}",
+							"host": [
+								"{{MSISDN_ORACLE_ENDPOINT}}"
+							],
+							"path": [
+								"participants",
+								"MSISDN",
+								"{{DFSP_MSISDN}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register {{DFSP_ACCOUNT_ID}} in MERCHANT Oracle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.interoperability.participants+json;version=1"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.interoperability.participants+json;version=1.0"
+							},
+							{
+								"key": "Date",
+								"value": ""
+							},
+							{
+								"key": "FSPIOP-Source",
+								"value": "hub_operator"
+							},
+							{
+								"key": "Postman-Token",
+								"value": "7aa4c9f3-1738-49f0-8904-7821e2336692,4127ff87-7d17-483c-8e3e-f0b562a16d84"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.11.0"
+							},
+							{
+								"key": "accept-encoding",
+								"value": "gzip, deflate"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"currency\": \"{{DFSP_CURRENCY}}\"\n}"
+						},
+						"url": {
+							"raw": "{{MERCHANT_ORACLE_ENDPOINT}}/participants/ACCOUNT_ID/{{DFSP_ACCOUNT_ID}}",
+							"host": [
+								"{{MERCHANT_ORACLE_ENDPOINT}}"
+							],
+							"path": [
+								"participants",
+								"ACCOUNT_ID",
+								"{{DFSP_ACCOUNT_ID}}"
+							]
+						}
 					},
 					"response": []
 				}
