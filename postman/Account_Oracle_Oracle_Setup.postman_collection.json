@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "754b2806-a7cf-4f3c-8fe8-7f23af1e4451",
+		"name": "Account_Oracle_Oracle_Setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "prefix-oracle-mapping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"setTimeout(function () {",
+							"    const getRequest = {",
+							"        url: `${pm.environment.get(\"ACCOUNT_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes`,",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Content-Type': 'application/json',",
+							"            'fspiop-source': 'testing'",
+							"        }",
+							"    };",
+							"    pm.sendRequest(getRequest, (error, response) => {",
+							"    console.log(error ? error : response.json());",
+							"    response.json()",
+							"                .filter(prefix => prefix.fspId==='{{DFSP_NAME}}')",
+							"                .forEach(prefix => {",
+							"                    setTimeout(function () {",
+							"                        const delRequest = {",
+							"                            url: `${pm.environment.get(\"ACCOUNT_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes/${prefix.id}`,",
+							"                            method: 'DELETE',",
+							"                            header: {",
+							"                                'Content-Type': 'application/json',",
+							"                            }",
+							"                        };",
+							"                        pm.sendRequest(delRequest, (error, response) => {",
+							"                            console.log(error ? error : response.json());",
+							"                        });",
+							"                    });",
+							"                });",
+							"    });",
+							"}, 2000)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_PREFIX}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ACCOUNT_ORACLE_ADMIN_API_ENDPOINT}}/prefixes",
+					"host": [
+						"{{ACCOUNT_ORACLE_ADMIN_API_ENDPOINT}}"
+					],
+					"path": [
+						"prefixes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "alias-oracle-setup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"setTimeout(function () {",
+							"    const getRequest = {",
+							"        url: `${pm.environment.get(\"ACCOUNT_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes`,",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Content-Type': 'application/json',",
+							"            'fspiop-source': 'testing'",
+							"        }",
+							"    };",
+							"    pm.sendRequest(getRequest, (error, response) => {",
+							"    console.log(error ? error : response.json());",
+							"    response.json()",
+							"                .filter(prefix => prefix.fspId==='{{DFSP_NAME}}')",
+							"                .forEach(prefix => {",
+							"                    setTimeout(function () {",
+							"                        const delRequest = {",
+							"                            url: `${pm.environment.get(\"ACCOUNT_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes/${prefix.id}`,",
+							"                            method: 'DELETE',",
+							"                            header: {",
+							"                                'Content-Type': 'application/json',",
+							"                            }",
+							"                        };",
+							"                        pm.sendRequest(delRequest, (error, response) => {",
+							"                            console.log(error ? error : response.json());",
+							"                        });",
+							"                    });",
+							"                });",
+							"    });",
+							"}, 2000)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ALIAS_ORACLE_ADMIN_API_ENDPOINT}}/participants",
+					"host": [
+						"{{ALIAS_ORACLE_ADMIN_API_ENDPOINT}}"
+					],
+					"path": [
+						"participants"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
