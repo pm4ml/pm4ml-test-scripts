@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "5d6db811-9d01-4875-b8ad-179d2c2d609d",
-		"name": "Account_Oracle_Oracle_Registration",
+		"name": "Account_Alias_Oracle_Registration",
 		"description": "Author: Sridevi Miriyala\nPurpose: Used to add new FSP and relevant Callback Information. \nIn this collection we onboarded HUB accounts for the corresponding currency, payerfsp, payeefsp, testfsp1, testfsp2 sims.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
