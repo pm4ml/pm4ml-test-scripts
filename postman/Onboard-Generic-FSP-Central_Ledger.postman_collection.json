@@ -1179,7 +1179,7 @@
 					"name": "oracle_registration",
 					"item": [
 						{
-							"name": "Add {{DFSP2_ACCOUNTID}} in ACCOUNT_ID Oracle",
+							"name": "Add {{DFSP_ACCOUNTID}} in ACCOUNT_ID Oracle",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1249,7 +1249,7 @@
 							"response": []
 						},
 						{
-							"name": "Add {{DFSP2_MSISDN}} in MSISDN Oracle",
+							"name": "Add {{DFSP_MSISDN}} in MSISDN Oracle",
 							"request": {
 								"auth": {
 									"type": "bearer",
