@@ -901,204 +901,58 @@
 					]
 				},
 				{
-					"name": "oracle_registration",
+					"name": "notification_emails",
 					"item": [
 						{
-							"name": "notification_emails",
-							"item": [
-								{
-									"name": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Cache-Control",
-												"value": "no-cache"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "FSPIOP-Source",
-												"value": "{{DFSP_NAME}}",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"type\": \"NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
-										},
-										"url": {
-											"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-											"host": [
-												"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-											],
-											"path": [
-												"participants",
-												"{{DFSP_NAME}}",
-												"endpoints"
-											]
-										},
-										"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
-									},
-									"response": [
+							"name": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
 										{
-											"name": "2. Create Initial Position and Limits",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Cache-Control",
-														"value": "no-cache"
-													},
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
-												},
-												"url": {
-													"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-													"protocol": "http",
-													"host": [
-														"test-central-ledger",
-														"mojaloop",
-														"live"
-													],
-													"path": [
-														"admin",
-														"participants",
-														"testfsp",
-														"initialPositionAndLimits"
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "Text",
-											"header": [],
-											"cookie": [],
-											"body": ""
+											"key": "token",
+											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+											"type": "string"
 										}
 									]
 								},
-								{
-									"name": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Cache-Control",
-												"value": "no-cache"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "FSPIOP-Source",
-												"value": "{{HUB_OPERATOR}}",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"type\": \"NET_DEBIT_CAP_ADJUSTMENT_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
-										},
-										"url": {
-											"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-											"host": [
-												"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-											],
-											"path": [
-												"participants",
-												"{{DFSP_NAME}}",
-												"endpoints"
-											]
-										},
-										"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cache-Control",
+										"value": "no-cache"
 									},
-									"response": [
-										{
-											"name": "2. Create Initial Position and Limits",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Cache-Control",
-														"value": "no-cache"
-													},
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
-												},
-												"url": {
-													"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-													"protocol": "http",
-													"host": [
-														"test-central-ledger",
-														"mojaloop",
-														"live"
-													],
-													"path": [
-														"admin",
-														"participants",
-														"testfsp",
-														"initialPositionAndLimits"
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "Text",
-											"header": [],
-											"cookie": [],
-											"body": ""
-										}
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "FSPIOP-Source",
+										"value": "{{DFSP_NAME}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
+									"host": [
+										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+									],
+									"path": [
+										"participants",
+										"{{DFSP_NAME}}",
+										"endpoints"
 									]
 								},
+								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
+							},
+							"response": [
 								{
-									"name": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-													"type": "string"
-												}
-											]
-										},
+									"name": "2. Create Initial Position and Limits",
+									"originalRequest": {
 										"method": "POST",
 										"header": [
 											{
@@ -1108,76 +962,222 @@
 											{
 												"key": "Content-Type",
 												"value": "application/json"
-											},
-											{
-												"key": "FSPIOP-Source",
-												"value": "{{DFSP_NAME}}",
-												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"type\": \"SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
+											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
 										},
 										"url": {
-											"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
+											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
+											"protocol": "http",
 											"host": [
-												"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+												"test-central-ledger",
+												"mojaloop",
+												"live"
 											],
 											"path": [
+												"admin",
 												"participants",
-												"{{DFSP_NAME}}",
-												"endpoints"
+												"testfsp",
+												"initialPositionAndLimits"
 											]
-										},
-										"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
-									},
-									"response": [
-										{
-											"name": "2. Create Initial Position and Limits",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Cache-Control",
-														"value": "no-cache"
-													},
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
-												},
-												"url": {
-													"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-													"protocol": "http",
-													"host": [
-														"test-central-ledger",
-														"mojaloop",
-														"live"
-													],
-													"path": [
-														"admin",
-														"participants",
-														"testfsp",
-														"initialPositionAndLimits"
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "Text",
-											"header": [],
-											"cookie": [],
-											"body": ""
 										}
-									]
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
 								}
 							]
 						},
+						{
+							"name": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cache-Control",
+										"value": "no-cache"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "FSPIOP-Source",
+										"value": "{{HUB_OPERATOR}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"NET_DEBIT_CAP_ADJUSTMENT_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
+									"host": [
+										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+									],
+									"path": [
+										"participants",
+										"{{DFSP_NAME}}",
+										"endpoints"
+									]
+								},
+								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
+							},
+							"response": [
+								{
+									"name": "2. Create Initial Position and Limits",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cache-Control",
+												"value": "no-cache"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
+										},
+										"url": {
+											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
+											"protocol": "http",
+											"host": [
+												"test-central-ledger",
+												"mojaloop",
+												"live"
+											],
+											"path": [
+												"admin",
+												"participants",
+												"testfsp",
+												"initialPositionAndLimits"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cache-Control",
+										"value": "no-cache"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "FSPIOP-Source",
+										"value": "{{DFSP_NAME}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
+									"host": [
+										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+									],
+									"path": [
+										"participants",
+										"{{DFSP_NAME}}",
+										"endpoints"
+									]
+								},
+								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
+							},
+							"response": [
+								{
+									"name": "2. Create Initial Position and Limits",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cache-Control",
+												"value": "no-cache"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
+										},
+										"url": {
+											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
+											"protocol": "http",
+											"host": [
+												"test-central-ledger",
+												"mojaloop",
+												"live"
+											],
+											"path": [
+												"admin",
+												"participants",
+												"testfsp",
+												"initialPositionAndLimits"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "oracle_registration",
+					"item": [
 						{
 							"name": "Add {{DFSP2_ACCOUNTID}} in ACCOUNT_ID Oracle",
 							"request": {
