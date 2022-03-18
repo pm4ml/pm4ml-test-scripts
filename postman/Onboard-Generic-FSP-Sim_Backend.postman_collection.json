@@ -122,6 +122,63 @@
 						"description": "Create a party in payeefsp. So that GET /parties can be successful."
 					},
 					"response": []
+				},
+				{
+					"name": "Add {{DFSP_ACCOUNT_SUBID} to DFSP",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('fullName', '{{PARTY_FULL_NAME}}');",
+									"pm.environment.set('firstName', '{{PARTY_FIRST_NAME}}');",
+									"pm.environment.set('middleName', '{{PARTY_MIDDLE_NAME}}');",
+									"pm.environment.set('lastName', '{{PARTY_LAST_NAME}}');",
+									"pm.environment.set('dob', '{{PARTY_DOB}}');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204,200, 500]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"displayName\": \"{{fullName}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"middleName\": \"{{middleName}}\",\n    \"lastName\": \"{{lastName}}\",\n    \"dateOfBirth\": \"{{dob}}\",\n    \"idType\": \"ACCOUNT_ID\",\n    \"idValue\": \"{{DFSP_ACCOUNT_ID}}\",\n    \"subIdValue\": \"{{DFSP_SUB_ID}}\",\n    \"extensionList\":[ \n        {\n            \"key\": \"mfiName\",\n            \"value\": \"{{DFSP_NAME}}\"\n        },\n        {\n            \"key\": \"amountDue\",\n            \"value\": \"500000\"\n        },\n        {\n            \"key\": \"dueDate\",\n            \"value\": \"2022-08-27\"\n        },\n        {\n            \"key\": \"branchName\",\n            \"value\": \"Head Office\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{GENERIC_DFSP_BACKEND_TESTAPI_URL}}/repository/parties",
+							"host": [
+								"{{GENERIC_DFSP_BACKEND_TESTAPI_URL}}"
+							],
+							"path": [
+								"repository",
+								"parties"
+							]
+						},
+						"description": "Create a party in payeefsp. So that GET /parties can be successful."
+					},
+					"response": []
 				}
 			]
 		}
