@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "754b2806-a7cf-4f3c-8fe8-7f23af1e4451",
+		"_postman_id": "0f735431-54bb-4d15-9041-6ec7d810651e",
 		"name": "Account_Alias_Oracle_Setup",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -23,6 +23,12 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"var value = \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\";",
+							"value = JSON.stringify(value).slice(1, -1)",
+							"console.log(value);",
+							"pm.environment.set('additionalInfoval', value);",
+							"//pm.environment.set('additionalInfoval', \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\");",
+							"",
 							"setTimeout(function () {",
 							"    const getRequest = {",
 							"        url: `${pm.environment.get(\"ACCOUNT_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes`,",
@@ -62,7 +68,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_PREFIX}}\n}",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\",\n   \"additionalInfo\": \"{{additionalInfoval}}\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
