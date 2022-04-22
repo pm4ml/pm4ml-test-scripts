@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0f735431-54bb-4d15-9041-6ec7d810651e",
+		"_postman_id": "9d9883ed-b8c6-46ec-9caf-1f2818edb595",
 		"name": "Account_Alias_Oracle_Setup",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -79,6 +79,88 @@
 					"raw": "{{ACCOUNT_ORACLE_ADMIN_API_ENDPOINT}}/prefixes",
 					"host": [
 						"{{ACCOUNT_ORACLE_ADMIN_API_ENDPOINT}}"
+					],
+					"path": [
+						"prefixes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "p2p-prefix-oracle-mapping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var value = \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\";",
+							"value = JSON.stringify(value).slice(1, -1)",
+							"console.log(value);",
+							"pm.environment.set('additionalInfoval', value);",
+							"//pm.environment.set('additionalInfoval', \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\");",
+							"",
+							"setTimeout(function () {",
+							"    const getRequest = {",
+							"        url: `${pm.environment.get(\"P2P_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes`,",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Content-Type': 'application/json',",
+							"            'fspiop-source': 'testing'",
+							"        }",
+							"    };",
+							"    pm.sendRequest(getRequest, (error, response) => {",
+							"    console.log(error ? error : response.json());",
+							"    response.json()",
+							"                .filter(prefix => prefix.fspId==='{{DFSP_NAME}}')",
+							"                .forEach(prefix => {",
+							"                    setTimeout(function () {",
+							"                        const delRequest = {",
+							"                            url: `${pm.environment.get(\"P2P_ORACLE_ADMIN_API_ENDPOINT\")}/prefixes/${prefix.id}`,",
+							"                            method: 'DELETE',",
+							"                            header: {",
+							"                                'Content-Type': 'application/json',",
+							"                            }",
+							"                        };",
+							"                        pm.sendRequest(delRequest, (error, response) => {",
+							"                            console.log(error ? error : response.json());",
+							"                        });",
+							"                    });",
+							"                });",
+							"    });",
+							"}, 2000)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_P2P_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\",\n   \"additionalInfo\": \"{{additionalInfoval}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{P2P_ORACLE_ADMIN_API_ENDPOINT}}/prefixes",
+					"host": [
+						"{{P2P_ORACLE_ADMIN_API_ENDPOINT}}"
 					],
 					"path": [
 						"prefixes"

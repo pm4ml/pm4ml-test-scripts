@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f4ee8e3e-fd6e-4ab8-8991-a5144e633bf7",
+		"_postman_id": "08db4b05-73ef-4814-b5e4-291af8f87f9f",
 		"name": "Onboard-Generic-FSP-Sim_Backend",
 		"description": "Author: Kamuela Franco\nPurpose: Used to add new FSP and relevant Callback Information",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -165,6 +165,63 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"displayName\": \"{{fullName}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"middleName\": \"{{middleName}}\",\n    \"lastName\": \"{{lastName}}\",\n    \"dateOfBirth\": \"{{dob}}\",\n    \"idType\": \"ACCOUNT_ID\",\n    \"idValue\": \"{{DFSP_ACCOUNT_ID}}\",\n    \"subIdValue\": \"{{DFSP_SUB_ID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{GENERIC_DFSP_BACKEND_TESTAPI_URL}}/repository/parties",
+							"host": [
+								"{{GENERIC_DFSP_BACKEND_TESTAPI_URL}}"
+							],
+							"path": [
+								"repository",
+								"parties"
+							]
+						},
+						"description": "Create a party in payeefsp. So that GET /parties can be successful."
+					},
+					"response": []
+				},
+				{
+					"name": "Add {{DFSP_ALIAS_ID} to DFSP",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('fullName', '{{PARTY_FULL_NAME}}');",
+									"pm.environment.set('firstName', '{{PARTY_FIRST_NAME}}');",
+									"pm.environment.set('middleName', '{{PARTY_MIDDLE_NAME}}');",
+									"pm.environment.set('lastName', '{{PARTY_LAST_NAME}}');",
+									"pm.environment.set('dob', '{{PARTY_DOB}}');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204,200, 500]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"displayName\": \"{{fullName}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"middleName\": \"{{middleName}}\",\n    \"lastName\": \"{{lastName}}\",\n    \"dateOfBirth\": \"{{dob}}\",\n    \"idType\": \"ALIAS\",\n    \"idValue\": \"{{DFSP_ALIAS_ID}}\"\n}"
 						},
 						"url": {
 							"raw": "{{GENERIC_DFSP_BACKEND_TESTAPI_URL}}/repository/parties",
