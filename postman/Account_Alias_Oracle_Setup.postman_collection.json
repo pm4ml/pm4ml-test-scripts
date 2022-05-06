@@ -23,7 +23,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"var value = \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\";",
+							"var value = { employees : 10000, country: ''+pm.environment.get('currency')+''};",
 							"value = JSON.stringify(value).slice(1, -1)",
 							"console.log(value);",
 							"pm.environment.set('additionalInfoval', value);",
