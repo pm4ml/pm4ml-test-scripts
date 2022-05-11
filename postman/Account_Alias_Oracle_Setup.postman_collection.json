@@ -13,7 +13,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200,500]);",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,400]);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -23,8 +23,9 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"var value = { employees : 10000, country: ''+pm.environment.get('currency')+''};",
-							"value = JSON.stringify(value).slice(1, -1)",
+							"var value = '{ \"employees\" : 1000, \"country\": \"USA\" }';",
+							"//value = JSON.stringify(value).slice(1, -1)",
+							"//value = ''+JSON.stringify(value)+'';",
 							"console.log(value);",
 							"pm.environment.set('additionalInfoval', value);",
 							"//pm.environment.set('additionalInfoval', \"{ \\\"employees\\\" : 10000, \\\"country\\\": \\\"\"+pm.environment.get('currency')+\"\\\" }\");",
@@ -68,7 +69,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\",\n   \"additionalInfo\": \"{{additionalInfoval}}\"\n}",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -95,7 +96,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200,500]);",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,400]);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -150,7 +151,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_P2P_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\",\n   \"additionalInfo\": \"{{additionalInfoval}}\"\n}",
+					"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"prefix\": {{DFSP_P2P_PREFIX}},\n    \"status\": \"active\",\n    \"localeName\": \"{{DFSP_NAME}}\",\n    \"dfspType\": \"wallet\",\n    \"logoDataType\": \"data:image/jpeg;base64,\",\n    \"logoBase64\": \"<base64_encoded_string>\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

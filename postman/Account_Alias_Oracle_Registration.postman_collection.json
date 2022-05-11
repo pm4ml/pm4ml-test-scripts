@@ -1,11 +1,67 @@
 {
 	"info": {
-		"_postman_id": "01ddc5a2-60cb-4fe1-85c6-31743489c1bb",
+		"_postman_id": "0c6a14a3-c9af-42eb-b3fa-b7bb96f9738d",
 		"name": "Account_Alias_Oracle_Registration",
 		"description": "Author: Sridevi Miriyala\nPurpose: Used to add new FSP and relevant Callback Information. \nIn this collection we onboarded HUB accounts for the corresponding currency, payerfsp, payeefsp, testfsp1, testfsp2 sims.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Register MSISDN Oracle",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.interoperability.participants+json;version=1"
+					},
+					{
+						"key": "Cache-Control",
+						"value": "no-cache"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.interoperability.participants+json;version=1.0"
+					},
+					{
+						"key": "Date",
+						"value": ""
+					},
+					{
+						"key": "Postman-Token",
+						"value": "003d55c1-2ebc-4e25-b9da-26bf053a8a5c"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"oracleIdType\": \"MSISDN\",\n  \"endpoint\": {\n    \"value\": \"{{MSISDN_ORACLE_ENDPOINT}}\",\n    \"endpointType\": \"URL\"\n  },\n  \"currency\": \"{{currency}}\",\n  \"isDefault\": true\n}"
+				},
+				"url": {
+					"raw": "{{HOST_ACCOUNT_LOOKUP_ADMIN}}/oracles",
+					"host": [
+						"{{HOST_ACCOUNT_LOOKUP_ADMIN}}"
+					],
+					"path": [
+						"oracles"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Register ACCOUNT_ID Oracle",
 			"request": {

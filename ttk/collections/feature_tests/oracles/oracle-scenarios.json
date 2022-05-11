@@ -1,0 +1,399 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Test Case for MSISDN Oracle",
+      "fileInfo": {
+        "path": "collections/oracles/oracle-scenarios.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Happy path scenario",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check payer ID value",
+                "exec": [
+                  "expect(response.body.from.idValue).to.eql('{$inputs.DFSP1_PARTY_ID_1}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check payee ID type",
+                "exec": [
+                  "expect(response.body.to.idType).to.eql('{$inputs.DFSP2_PARTY_ID_TYPE_1}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check Payee idValue",
+                "exec": [
+                  "",
+                  "expect(response.body.to.idValue).to.equal('{$inputs.DFSP2_PARTY_ID_1}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check Payee fspId",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('{$inputs.DFSP2_ID}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Check Payee DOB",
+                "exec": [
+                  "expect(response.body.to.dateOfBirth).to.equal('{$inputs.DFSP2_PARTY_DOB}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Check amount type is SEND",
+                "exec": [
+                  "expect(response.body.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Check Currency ",
+                "exec": [
+                  "expect(response.body.currency).to.equal('{$inputs.currency}')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Check Transfer Amount",
+                "exec": [
+                  "expect(response.body.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Check Transaction type",
+                "exec": [
+                  "expect(response.body.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Check Note",
+                "exec": [
+                  "expect(response.body.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Check Home transaction ID",
+                "exec": [
+                  "",
+                  "expect(response.body.homeTransactionId).to.not.equal('\"   \"')",
+                  "expect(response.body).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Check current Quotes state",
+                "exec": [
+                  "",
+                  "expect(response.body.currentState).to.not.equal('')",
+                  "expect(response.body).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 16,
+                "description": "Check Quote Expiration",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.expiration).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Check Quote ILP packet",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.ilpPacket).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 18,
+                "description": "Check Quote response condition",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.condition).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 19,
+                "description": "Check Fulfil CompletedTimestamp",
+                "exec": [
+                  "expect(response.body.fulfil.CompletedTimestamp).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 20,
+                "description": "Check transferState",
+                "exec": [
+                  "expect(response.body.fulfil.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": 21,
+                "description": "Check Fulfilment",
+                "exec": [
+                  "expect(response.body.fulfil.body.fulfilment).to.not.equal('\"\"')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Test Case for ACCOUNT_ID Oracle",
+      "fileInfo": {
+        "path": "collections/oracles/oracle-scenarios.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Happy path scenario",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_2}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_2}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check payer ID value",
+                "exec": [
+                  "expect(response.body.from.idValue).to.eql('{$inputs.DFSP1_PARTY_ID_1}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check payee ID type",
+                "exec": [
+                  "expect(response.body.to.idType).to.eql('{$inputs.DFSP2_PARTY_ID_TYPE_1}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check Payee idValue",
+                "exec": [
+                  "",
+                  "expect(response.body.to.idValue).to.equal('{$inputs.DFSP2_PARTY_ID_1}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check Payee fspId",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('{$inputs.DFSP2_ID}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Check Payee DOB",
+                "exec": [
+                  "expect(response.body.to.dateOfBirth).to.equal('{$inputs.DFSP2_PARTY_DOB}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Check amount type is SEND",
+                "exec": [
+                  "expect(response.body.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Check Currency ",
+                "exec": [
+                  "expect(response.body.currency).to.equal('{$inputs.currency}')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Check Transfer Amount",
+                "exec": [
+                  "expect(response.body.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Check Transaction type",
+                "exec": [
+                  "expect(response.body.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Check Note",
+                "exec": [
+                  "expect(response.body.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Check Home transaction ID",
+                "exec": [
+                  "",
+                  "expect(response.body.homeTransactionId).to.not.equal('\"   \"')",
+                  "expect(response.body).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Check current Quotes state",
+                "exec": [
+                  "",
+                  "expect(response.body.currentState).to.not.equal('')",
+                  "expect(response.body).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 16,
+                "description": "Check Quote Expiration",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.expiration).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Check Quote ILP packet",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.ilpPacket).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 18,
+                "description": "Check Quote response condition",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.condition).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 19,
+                "description": "Check Fulfil CompletedTimestamp",
+                "exec": [
+                  "expect(response.body.fulfil.CompletedTimestamp).to.not.equal('\"\"')"
+                ]
+              },
+              {
+                "id": 20,
+                "description": "Check transferState",
+                "exec": [
+                  "expect(response.body.fulfil.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": 21,
+                "description": "Check Fulfilment",
+                "exec": [
+                  "expect(response.body.fulfil.body.fulfilment).to.not.equal('\"\"')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
