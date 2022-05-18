@@ -1,0 +1,409 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Positive Test Case for PATCH COMMITTED",
+      "fileInfo": {
+        "path": "patch_notifications/patch-scenarios.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.transferId = response.body.transferId;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Positive Test Case for PATCH ABORTED",
+      "fileInfo": {
+        "path": "patch_notifications/patch-scenarios.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "123123123123123",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.transferId = response.body.transferId;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
