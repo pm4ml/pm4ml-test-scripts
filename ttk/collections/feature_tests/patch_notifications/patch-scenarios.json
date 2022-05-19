@@ -212,7 +212,7 @@
       "requests": [
         {
           "id": 1,
-          "description": "Send request to Core Connector",
+          "description": "Send request to ML Connector",
           "apiVersion": {
             "minorVersion": 8,
             "majorVersion": 1,
@@ -220,8 +220,8 @@
             "asynchronous": false,
             "additionalApi": true
           },
-          "operationPath": "/sendmoney",
-          "path": "/sendmoney",
+          "operationPath": "/transfers",
+          "path": "/transfers",
           "method": "post",
           "body": {
             "from": {
@@ -251,21 +251,21 @@
               },
               {
                 "id": 2,
-                "description": "Check error code",
+                "description": "Response status text is Internal Server Error",
                 "exec": [
-                  "expect(response.body.statusCode).to.equal('5000')"
+                  "expect(response.statusText).to.equal('Internal Server Error')"
                 ]
               },
               {
                 "id": 3,
-                "description": "Check error description",
+                "description": "Check message contains invalid fulfillment",
                 "exec": [
-                  "expect(response.body.detailedDescription).contains('invalid fulfilment')"
+                  "expect(response.body.message).contains('Generic validation error - invalid fulfilment')"
                 ]
               }
             ]
           },
-          "url": "{$inputs.DFSP1_CBS_URL}",
+          "url": "{$inputs.DFSP1_ML_CONN_OUTBOUND_API_URL}",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -278,8 +278,139 @@
               ]
             }
           }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferState.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferState.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is ABORTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('ABORTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferState.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferState.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check error code in data is 3100",
+                "exec": [
+                  "expect(response.body.data.errorInformation.errorCode).to.equal('3100')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check error description in data is invalid fulfilment",
+                "exec": [
+                  "expect(response.body.data.errorInformation.errorDescription).to.equal('Generic validation error - invalid fulfilment')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
         }
-        ]
+      ]
     }
   ]
 }
