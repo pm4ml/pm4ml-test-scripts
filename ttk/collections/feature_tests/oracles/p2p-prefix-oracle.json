@@ -1,0 +1,111 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Happy Path for P2P Prefix Oracle Test Case",
+      "fileInfo": {
+        "path": "oracles/p2p-prefix-oracle.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector, Account ID to Alias ID",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_2}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_3}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_3}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_2}')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check payer ID Value",
+                "exec": [
+                  "expect(response.body.from.idValue).to.equal('{$inputs.DFSP1_PARTY_ID_2}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check payee ID Type",
+                "exec": [
+                  "expect(response.body.to.idType).to.equal('{$inputs.DFSP2_PARTY_ID_TYPE_3}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check payee ID Value",
+                "exec": [
+                  "expect(response.body.to.idValue).to.equal('{$inputs.DFSP2_PARTY_ID_3}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check final transfer status",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.transferId = response.body.transferId;"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]    
+}
