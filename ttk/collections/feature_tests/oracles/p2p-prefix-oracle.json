@@ -264,6 +264,13 @@
               },
               {
                 "id": 7,
+                "description": "Check receiver fspID",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('pm4mlreceiverfsp')"
+                ]
+              },
+              {
+                "id": 8,
                 "description": "Check final transfer status",
                 "exec": [
                   "expect(response.body.currentState).to.equal('COMPLETED')"
@@ -355,6 +362,13 @@
               },
               {
                 "id": 7,
+                "description": "Check receiver fspID",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('demowallet')"
+                ]
+              },
+              {
+                "id": 8,
                 "description": "Check final transfer status",
                 "exec": [
                   "expect(response.body.currentState).to.equal('COMPLETED')"
