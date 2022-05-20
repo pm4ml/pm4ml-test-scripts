@@ -43,9 +43,7 @@
               {
                 "id": 1,
                 "description": "Response status is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
+                "exec": ["expect(response.status).to.equal(200)"]
               },
               {
                 "id": 2,
@@ -94,18 +92,260 @@
           "url": "{$inputs.DFSP1_CBS_URL}",
           "scripts": {
             "preRequest": {
-              "exec": [
-                ""
-              ]
+              "exec": [""]
             },
             "postRequest": {
-              "exec": [
-                "environment.transferId = response.body.transferId;"
-              ]
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Test same MSISDN with different shot codes assigned to different fsps",
+      "fileInfo": {
+        "path": "oracles/p2p-prefix-oracle.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add MSISDN combination to p2preceiverfsp",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "body": {
+            "displayName": "TestALIASFirst TestALIASLast",
+            "firstName": "TestALIASFirst",
+            "middleName": "TestALIASMiddle",
+            "lastName": "TestALIASLast",
+            "dateOfBirth": "2010-10-10",
+            "idType": "ALIAS",
+            "idValue": "333555666777888"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 204",
+                "exec": ["expect(response.status).to.equal(204)"]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_SIM_BKND_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Add MSISDN combination to demowallet",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "body": {
+            "displayName": "TestALIASFirst TestALIASLast",
+            "firstName": "TestALIASFirst",
+            "middleName": "TestALIASMiddle",
+            "lastName": "TestALIASLast",
+            "dateOfBirth": "2010-10-10",
+            "idType": "ALIAS",
+            "idValue": "333555666777888"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 204",
+                "exec": ["expect(response.status).to.equal(204)"]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP3_SIM_BKND_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Send request to Core Connector, Account ID to Alias ID",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_2}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_3}",
+              "idValue": "333555666777888"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_2}')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check payer ID Value",
+                "exec": [
+                  "expect(response.body.from.idValue).to.equal('{$inputs.DFSP1_PARTY_ID_2}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check payee ID Type",
+                "exec": [
+                  "expect(response.body.to.idType).to.equal('{$inputs.DFSP2_PARTY_ID_TYPE_3}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check payee ID Value",
+                "exec": [
+                  "expect(response.body.to.idValue).to.equal('333555666777888')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check final transfer status",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "Delete ALIAS from pm4mlreceiverfsp",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties/ALIAS/333555666777888",
+          "path": "/repository/parties/ALIAS/333555666777888",
+          "method": "delete",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 204",
+                "exec": ["expect(response.status).to.equal(204)"]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_SIM_BKND_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "Delete ALIAS from demowallet",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties/ALIAS/333555666777888",
+          "path": "/repository/parties/ALIAS/333555666777888",
+          "method": "delete",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 204",
+                "exec": ["expect(response.status).to.equal(204)"]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP3_SIM_BKND_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
             }
           }
         }
       ]
     }
-  ]    
+  ]
 }
