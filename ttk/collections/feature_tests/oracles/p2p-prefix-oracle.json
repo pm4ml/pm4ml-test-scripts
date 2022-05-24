@@ -451,6 +451,164 @@
           }
         }
       ]
+    },
+    {
+      "id": 3,
+      "name": "Negative Testcase - prefix does not exist in Oracle",
+      "fileInfo": {
+        "path": "oracles/p2p-prefix-oracle.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector, Account ID to Alias ID",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_2}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_3}",
+              "idValue": "89{$inputs.DFSP2_PARTY_ID_3}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 500",
+                "exec": ["expect(response.status).to.equal(500)"]
+              },
+              {
+                "id": 2,
+                "description": "Response Status Code is 3204",
+                "exec": [
+                  "expect(response.body.statusCode).to.equal('3204')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response message says, Payment is not successful",
+                "exec": [
+                  "expect(response.body.message).to.equal('Payment is not successful. Please contact your service provider.')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response detailedDescription has Party Not Found",
+                "exec": [
+                  "expect(response.body.detailedDescription).contains('Party not found')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Negative Testcase - party does not exist in backend",
+      "fileInfo": {
+        "path": "oracles/p2p-prefix-oracle.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector, Account ID to Alias ID",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_2}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_2}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_3}",
+              "idValue": "555444333222"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 500",
+                "exec": ["expect(response.status).to.equal(500)"]
+              },
+              {
+                "id": 2,
+                "description": "Response Status Code is 3204",
+                "exec": [
+                  "expect(response.body.statusCode).to.equal('3204')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response message says, Payment is not successful",
+                "exec": [
+                  "expect(response.body.message).to.equal('Payment is not successful. Please contact your service provider.')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response detailedDescription has Party Not Found",
+                "exec": [
+                  "expect(response.body.detailedDescription).contains('Party not found')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        }
+      ]
     }
   ]
 }
