@@ -160,7 +160,7 @@
                 "id": 19,
                 "description": "check peerJWS",
                 "exec": [
-                  "expect(environment.mcmParticipants.sort()).to.have.members(environment.peerJWSDfspIds.sort());"
+                  "expect(environment.peerJWSDfspIds.sort()).to.include.members(eval(environment.PARTICIPANTS_TO_TEST).sort());"
                 ]
               }
             ]
