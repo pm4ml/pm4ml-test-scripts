@@ -1,0 +1,776 @@
+{
+  "name": "Tests for Bulk Feature",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Happy path for bulk with multiple transfers ",
+      "meta": {
+        "info": "Given auto_accept_party setting is set to false, When I submit a bulk transfer that has multiple transfers And for each transfer receiver party info does not exist in incoming request, Then the final response should have receiver fspid and demographic information populated"
+      },
+      "description": " ",
+      "fileInfo": {
+        "path": "bulk_tests/bulk-end-end.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/bulktransfer",
+          "path": "/bulktransfer",
+          "method": "post",
+          "body": {
+            "bulkTransferID": "string",
+            "payerfsp": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "16135551212",
+                "fspId": "string"
+              }
+            },
+            "individualTransfers": [
+              {
+                "homeTransactionId": "1234-5678",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "16135551212"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "USD",
+                "amount": "123.45"
+              },
+              {
+                "homeTransactionId": "6789-3456",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "24155551212"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "USD",
+                "amount": "784.45"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Test case for bulk with multiple transfers with mixed party information",
+      "meta": {
+        "info": "Given auto_accept_party setting is set to false, When I submit a bulk transfer that has multiple transfers And for some transfers receiver party info does not exist in incoming request but for others it exists, Then the final response should have receiver fspid and demographic information populated for the transfers that did not have receiver info in the incoming request."
+      },
+      "description": " ",
+      "fileInfo": {
+        "path": "bulk_tests/bulk-end-end.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/bulktransfer",
+          "path": "/bulktransfer",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Test case for bulk with multiple transfers and with some party lookups fails.",
+      "meta": {
+        "info": "Given auto_accept_party setting is set to false, When I submit a bulk transfer that has multiple transfers And for some transfers receiver party info does not exist in incoming request but for others it exists And if some of the party lookups fail on switch/payeefsp side, Then the final response should have error information populated for the transfers that failed party lookups."
+      },
+      "description": " ",
+      "fileInfo": {
+        "path": "bulk_tests/bulk-end-end.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/bulktransfer",
+          "path": "/bulktransfer",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Test case for bulk with multiple transfers and with some party lookups timeouts.",
+      "meta": {
+        "info": "Given auto_accept_party setting is set to false, When I submit a bulk transfer that has multiple transfers And for some transfers receiver party info does not exist in incoming request but for others it exists And if some of the party lookups timeout on payeefsp side, Then the final response should have timeout details populated in the error information section for the transfers that has the time outs."
+      },
+      "description": " ",
+      "fileInfo": {
+        "path": "bulk_tests/bulk-end-end.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send request to Core Connector",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/bulktransfer",
+          "path": "/bulktransfer",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "{$inputs.DFSP1_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP1_PARTY_ID_1}"
+            },
+            "to": {
+              "idType": "{$inputs.DFSP2_PARTY_ID_TYPE_1}",
+              "idValue": "{$inputs.DFSP2_PARTY_ID_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check payer name",
+                "exec": [
+                  "expect(response.body.from.displayName).to.equal('{$inputs.DFSP1_PARTY_NAME}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check payer ID Type",
+                "exec": [
+                  "expect(response.body.from.idType).to.equal('{$inputs.DFSP1_PARTY_ID_TYPE_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_CBS_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;"]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Check response from Payee Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/requests/{transferId}",
+          "path": "/requests/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP2_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Check response from Payer Ml-Conn TestAPI",
+          "apiVersion": {
+            "minorVersion": 8,
+            "majorVersion": 1,
+            "type": "openapi_core_conn",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/callbacks/{transferId}",
+          "path": "/callbacks/{$prev.1.response.body.transferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "Check HTTP method in headers",
+                "exec": [
+                  "expect(response.body.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check fspiop-source is Switch",
+                "exec": [
+                  "expect(response.body.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check Staus in data is COMMITTED",
+                "exec": [
+                  "expect(response.body.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.DFSP1_ML_CONN_TEST_API_URL}",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
