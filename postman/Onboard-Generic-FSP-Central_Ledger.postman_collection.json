@@ -157,20 +157,15 @@
 								"method": "POST",
 								"header": [
 									{
-										"key": "content-type",
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
 										"value": "application/json"
 									},
 									{
-										"key": "fspiop-source",
-										"value": "NOT_APPLICABLE"
-									},
-									{
-										"key": "traceparent",
-										"value": "00-aabbfe78525b82e4176ba64e1c24137c-0123456789abcdef0-00"
-									},
-									{
-										"key": "user-agent",
-										"value": "axios/0.27.2"
+										"key": "FSPIOP-Source",
+										"type": "text",
+										"value": "{{HUB_OPERATOR}}"
 									}
 								],
 								"body": {
