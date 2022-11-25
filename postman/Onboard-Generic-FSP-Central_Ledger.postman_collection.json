@@ -173,7 +173,7 @@
 									"raw": "{\n    \"transferId\": \"{{transferId}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
 								},
 								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts/",
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts",
 									"host": [
 										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
 									],
