@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cf1f4b94-a9e7-4388-b25f-db6e24e2753c",
+		"_postman_id": "82434ec8-8839-428d-b5a0-0a6cbd68589c",
 		"name": "Onboard-Generic-FSP-Central_Ledger",
 		"description": "Author: Kamuela Franco\nPurpose: Used to add new FSP and relevant Callback Information",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -146,23 +146,23 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const jsonData = pm.response.body",
+											"const jsonData = pm.response.json()",
 											"console.log(jsonData)",
 											"for(var i in jsonData) {",
+											"  console.log(\"jsonData[i]=\"+jsonData[i])",
 											"  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('DFSP_CURRENCY')) {",
 											"    pm.environment.set(\"DFSP_SETTLEMENT_ACCOUNT_ID\", jsonData[i].id)",
 											"    pm.environment.set(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN\", jsonData[i].value)",
 											"  }",
 											"}",
-											""
+											"",
+											"console.log(\"DFSP_SETTLEMENT_ACCOUNT_ID=\"+pm.environment.get(\"DFSP_SETTLEMENT_ACCOUNT_ID\"))",
+											"console.log(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN=\"+pm.environment.get(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN\"))"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -188,10 +188,6 @@
 										"value": "{{HUB_OPERATOR}}"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"transferId\": \"{{transferId}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
-								},
 								"url": {
 									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts",
 									"host": [
