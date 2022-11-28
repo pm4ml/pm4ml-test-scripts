@@ -3,7 +3,7 @@
 		"_postman_id": "82434ec8-8839-428d-b5a0-0a6cbd68589c",
 		"name": "Onboard-Generic-FSP-Central_Ledger",
 		"description": "Author: Kamuela Franco\nPurpose: Used to add new FSP and relevant Callback Information",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "218620"
 	},
 	"item": [
@@ -31,13 +31,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -57,15 +53,7 @@
 									"mode": "raw",
 									"raw": "{\"name\": \"{{DFSP_NAME}}\",\"currency\": \"{{DFSP_CURRENCY}}\"}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants"
 							},
 							"response": []
 						},
@@ -87,13 +75,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -113,17 +97,7 @@
 									"mode": "raw",
 									"raw": "{\n\t\"currency\": \"{{DFSP_CURRENCY}}\",\n\t\"limit\": {\n\t  \"type\": \"NET_DEBIT_CAP\",\n\t  \"value\": {{INITIAL_NET_DEBIT_CAP}}\n\t},\n\t\"initialPosition\": {{INITIAL_POSITION}}\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/initialPositionAndLimits",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"initialPositionAndLimits"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/initialPositionAndLimits"
 							},
 							"response": []
 						},
@@ -134,9 +108,6 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"var uuid = require('uuid');",
-											"var generatedUUID = uuid.v4();",
-											"pm.environment.set('transferId', generatedUUID);",
 											""
 										],
 										"type": "text/javascript"
@@ -147,6 +118,7 @@
 									"script": {
 										"exec": [
 											"const jsonData = pm.response.json()",
+											"console.log(\"DFSP_CURRENCY=\"+pm.environment.get('DFSP_CURRENCY'))",
 											"console.log(jsonData)",
 											"for(var i in jsonData) {",
 											"  console.log(\"jsonData[i]=\"+jsonData[i])",
@@ -166,13 +138,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "GET",
 								"header": [
@@ -188,17 +156,7 @@
 										"value": "{{HUB_OPERATOR}}"
 									}
 								],
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"accounts"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts"
 							},
 							"response": []
 						},
@@ -212,6 +170,10 @@
 											"var uuid = require('uuid');",
 											"var generatedUUID = uuid.v4();",
 											"pm.environment.set('transferId', generatedUUID);",
+											"",
+											"console.log(\"transferId=\"+pm.environment.get('transferId'));",
+											"console.log(\"DFSP_TRANSFER_FUNDSIN_AMOUNT=\"+pm.environment.get('DFSP_TRANSFER_FUNDSIN_AMOUNT'));",
+											"console.log(\"DFSP_CURRENCY=\"+pm.environment.get('DFSP_CURRENCY'));",
 											""
 										],
 										"type": "text/javascript"
@@ -221,13 +183,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -247,18 +205,7 @@
 									"mode": "raw",
 									"raw": "{\n    \"transferId\": \"{{transferId}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts/{{DFSP_SETTLEMENT_ACCOUNT_ID}}",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"accounts",
-										"{{DFSP_SETTLEMENT_ACCOUNT_ID}}"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts/{{DFSP_SETTLEMENT_ACCOUNT_ID}}"
 							},
 							"response": []
 						}
@@ -285,13 +232,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -311,17 +254,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/participants/{{partyIdType}}/{{partyIdentifier}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -343,13 +276,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -364,17 +293,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/participants/{{partyIdType}}/{{partyIdentifier}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -396,13 +315,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -417,17 +332,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/participants/{{requestId}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -449,13 +354,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -470,17 +371,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/participants/{{requestId}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -502,13 +393,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -523,17 +410,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_GET\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -555,13 +432,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -576,17 +449,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -608,13 +471,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -629,17 +488,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -661,13 +510,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -682,17 +527,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -714,13 +549,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -735,17 +566,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -767,13 +588,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -788,17 +605,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -820,13 +627,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -846,17 +649,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_QUOTES\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -878,13 +671,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -904,17 +693,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_TRANSFER_POST\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/transfers\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -936,13 +715,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -962,17 +737,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_TRANSFER_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/transfers/{{transferId}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -994,13 +759,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1020,17 +781,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_TRANSFER_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/transfers/{{transferId}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -1052,13 +803,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1078,17 +825,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_BULK_QUOTES\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -1110,13 +847,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1136,17 +869,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/bulkTransfers\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -1168,13 +891,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1194,17 +913,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/bulkTransfers/{{id}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						},
@@ -1226,13 +935,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1252,17 +957,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR\",\n  \"value\": \"{{GENERIC_DFSP_CALLBACK_URL}}/bulkTransfers/{{id}}/error\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								}
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints"
 							},
 							"response": []
 						}
@@ -1276,13 +971,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1304,17 +995,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								},
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
 								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
 							},
 							"response": [
@@ -1336,21 +1017,7 @@
 											"mode": "raw",
 											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
 										},
-										"url": {
-											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-											"protocol": "http",
-											"host": [
-												"test-central-ledger",
-												"mojaloop",
-												"live"
-											],
-											"path": [
-												"admin",
-												"participants",
-												"testfsp",
-												"initialPositionAndLimits"
-											]
-										}
+										"url": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits"
 									},
 									"status": "OK",
 									"code": 200,
@@ -1366,13 +1033,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1394,17 +1057,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"NET_DEBIT_CAP_ADJUSTMENT_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								},
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
 								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
 							},
 							"response": [
@@ -1426,21 +1079,7 @@
 											"mode": "raw",
 											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
 										},
-										"url": {
-											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-											"protocol": "http",
-											"host": [
-												"test-central-ledger",
-												"mojaloop",
-												"live"
-											],
-											"path": [
-												"admin",
-												"participants",
-												"testfsp",
-												"initialPositionAndLimits"
-											]
-										}
+										"url": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits"
 									},
 									"status": "OK",
 									"code": 200,
@@ -1456,13 +1095,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1484,17 +1119,7 @@
 									"mode": "raw",
 									"raw": "{\n  \"type\": \"SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL\",\n  \"value\": \"{{DFSP_NOTIFICATION_EMAIL}}\"\n}"
 								},
-								"url": {
-									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
-									"host": [
-										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
-									],
-									"path": [
-										"participants",
-										"{{DFSP_NAME}}",
-										"endpoints"
-									]
-								},
+								"url": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/endpoints",
 								"description": "Generated from a curl request: \ncurl -i -X POST     http://test-central-ledger.mojaloop.test/admin/participants/testfsp2/initialPositionAndLimits     -H 'Cache-Control: no-cache'     -H 'Content-Type: application/json'     -d '{\n    \\\"currency\\\": \\\"USD\\\",\n    \\\"limit\\\": {\n      \\\"type\\\": \\\"NET_DEBIT_CAP\\\",\n      \\\"value\\\": 1000\n    },\n    \\\"initialPosition\\\": 0\n  }'"
 							},
 							"response": [
@@ -1516,21 +1141,7 @@
 											"mode": "raw",
 											"raw": "{\n    \"currency\": \"USD\",\n    \"limit\": {\n      \"type\": \"NET_DEBIT_CAP\",\n      \"value\": 1000\n    },\n    \"initialPosition\": 0\n  }"
 										},
-										"url": {
-											"raw": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits",
-											"protocol": "http",
-											"host": [
-												"test-central-ledger",
-												"mojaloop",
-												"live"
-											],
-											"path": [
-												"admin",
-												"participants",
-												"testfsp",
-												"initialPositionAndLimits"
-											]
-										}
+										"url": "http://test-central-ledger.mojaloop.live/admin/participants/testfsp/initialPositionAndLimits"
 									},
 									"status": "OK",
 									"code": 200,
@@ -1551,13 +1162,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1602,17 +1209,7 @@
 									"mode": "raw",
 									"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"currency\": \"{{currency}}\"\n}"
 								},
-								"url": {
-									"raw": "{{MSISDN_ORACLE_ENDPOINT}}/participants/ACCOUNT_ID/{{DFSP_ACCOUNT_ID}}",
-									"host": [
-										"{{MSISDN_ORACLE_ENDPOINT}}"
-									],
-									"path": [
-										"participants",
-										"ACCOUNT_ID",
-										"{{DFSP_ACCOUNT_ID}}"
-									]
-								}
+								"url": "{{MSISDN_ORACLE_ENDPOINT}}/participants/ACCOUNT_ID/{{DFSP_ACCOUNT_ID}}"
 							},
 							"response": []
 						},
@@ -1621,13 +1218,9 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
-											"type": "string"
-										}
-									]
+									"bearer": {
+										"token": "{{HUB_OPERATOR_BEARER_TOKEN}}"
+									}
 								},
 								"method": "POST",
 								"header": [
@@ -1672,17 +1265,7 @@
 									"mode": "raw",
 									"raw": "{\n    \"fspId\": \"{{DFSP_NAME}}\",\n    \"currency\": \"{{currency}}\"\n}"
 								},
-								"url": {
-									"raw": "{{MSISDN_ORACLE_ENDPOINT}}/participants/MSISDN/{{DFSP_MSISDN}}",
-									"host": [
-										"{{MSISDN_ORACLE_ENDPOINT}}"
-									],
-									"path": [
-										"participants",
-										"MSISDN",
-										"{{DFSP_MSISDN}}"
-									]
-								}
+								"url": "{{MSISDN_ORACLE_ENDPOINT}}/participants/MSISDN/{{DFSP_MSISDN}}"
 							},
 							"response": []
 						}
