@@ -211,9 +211,9 @@
 										"exec": [
 											"var uuid = require('uuid');",
 											"var generatedUUID = uuid.v4();",
-											"pm.environment.set('transferId', generatedUUID);",
+											"pm.environment.set('DFSP_TRANSFER_ID', generatedUUID);",
 											"",
-											"console.log(\"transferId=\"+pm.environment.get('transferId'));",
+											"console.log(\"DFSP_TRANSFER_ID=\"+pm.environment.get('DFSP_TRANSFER_ID'));",
 											"console.log(\"DFSP_TRANSFER_FUNDSIN_AMOUNT=\"+pm.environment.get('DFSP_TRANSFER_FUNDSIN_AMOUNT'));",
 											"console.log(\"DFSP_CURRENCY=\"+pm.environment.get('DFSP_CURRENCY'));",
 											""
@@ -249,7 +249,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"transferId\": \"{{transferId}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
+									"raw": "{\n    \"transferId\": \"{{DFSP_TRANSFER_ID}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
 								},
 								"url": {
 									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts/{{DFSP_SETTLEMENT_ACCOUNT_ID}}",
