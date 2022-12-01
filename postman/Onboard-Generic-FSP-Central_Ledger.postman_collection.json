@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "b0903c64-ef89-4e3f-b8f9-fdd455dd6e8c",
+		"_postman_id": "82434ec8-8839-428d-b5a0-0a6cbd68589c",
 		"name": "Onboard-Generic-FSP-Central_Ledger",
 		"description": "Author: Kamuela Franco\nPurpose: Used to add new FSP and relevant Callback Information",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9023774"
+		"_exporter_id": "218620"
 	},
 	"item": [
 		{
@@ -122,6 +122,145 @@
 										"participants",
 										"{{DFSP_NAME}}",
 										"initialPositionAndLimits"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Settlement Account for FundsIn - Generic DFSP",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json()",
+											"console.log(\"itt.DFSP_CURRENCY=\"+pm.iterationData.get('DFSP_CURRENCY'))",
+											" pm.environment.set('DFSP_CURRENCY', pm.iterationData.get('DFSP_CURRENCY') || pm.environment.get('DFSP_CURRENCY'))",
+											" console.log(\"env.DFSP_CURRENCY=\"+pm.environment.get('DFSP_CURRENCY'))",
+											"console.log(jsonData)",
+											"for(var i in jsonData) {",
+											"  console.log(\"jsonData[i]=\"+jsonData[i])",
+											"  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('DFSP_CURRENCY')) {",
+											"    pm.environment.set(\"DFSP_SETTLEMENT_ACCOUNT_ID\", jsonData[i].id)",
+											"    pm.environment.set(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN\", jsonData[i].value)",
+											"  }",
+											"}",
+											"",
+											"console.log(\"DFSP_SETTLEMENT_ACCOUNT_ID=\"+pm.environment.get(\"DFSP_SETTLEMENT_ACCOUNT_ID\"))",
+											"console.log(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN=\"+pm.environment.get(\"DFSP_SETTLEMENT_ACCOUNT_BALANCE_BEFORE_FUNDS_IN\"))"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "FSPIOP-Source",
+										"type": "text",
+										"value": "{{HUB_OPERATOR}}"
+									}
+								],
+								"url": {
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts",
+									"host": [
+										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+									],
+									"path": [
+										"participants",
+										"{{DFSP_NAME}}",
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deposit Funds in Settlement Account - Generic DFSP",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"var generatedUUID = uuid.v4();",
+											"pm.environment.set('DFSP_TRANSFER_ID', generatedUUID);",
+											"",
+											"console.log(\"DFSP_TRANSFER_ID=\"+pm.environment.get('DFSP_TRANSFER_ID'));",
+											"console.log(\"DFSP_TRANSFER_FUNDSIN_AMOUNT=\"+pm.environment.get('DFSP_TRANSFER_FUNDSIN_AMOUNT'));",
+											"console.log(\"DFSP_CURRENCY=\"+pm.environment.get('DFSP_CURRENCY'));",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{HUB_OPERATOR_BEARER_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "FSPIOP-Source",
+										"type": "text",
+										"value": "{{HUB_OPERATOR}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"transferId\": \"{{DFSP_TRANSFER_ID}}\",\n    \"externalReference\": \"Onboard-Generic_FSP_Central_Ledger Postman Collection\",\n    \"action\": \"recordFundsIn\",\n    \"reason\": \"provisioning\",\n    \"amount\": {\n        \"amount\": \"{{DFSP_TRANSFER_FUNDSIN_AMOUNT}}\",\n        \"currency\": \"{{DFSP_CURRENCY}}\"\n    }\n}\n"
+								},
+								"url": {
+									"raw": "{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}/participants/{{DFSP_NAME}}/accounts/{{DFSP_SETTLEMENT_ACCOUNT_ID}}",
+									"host": [
+										"{{HOST_CENTRAL_LEDGER}}{{BASE_CENTRAL_LEDGER_ADMIN}}"
+									],
+									"path": [
+										"participants",
+										"{{DFSP_NAME}}",
+										"accounts",
+										"{{DFSP_SETTLEMENT_ACCOUNT_ID}}"
 									]
 								}
 							},
