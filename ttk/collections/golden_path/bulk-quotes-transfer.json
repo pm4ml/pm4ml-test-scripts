@@ -44,7 +44,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
-                "amount": "10",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
                 "transactionType": "TRANSFER",
                 "note": "test"
               },
@@ -58,7 +58,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
-                "amount": "10",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
                 "transactionType": "TRANSFER",
                 "note": "test"
               }
@@ -104,7 +104,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "transactionType": "TRANSFER",
-                "amount": "10",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
                 "homeTransactionId": "{$function.generic.generateUUID}",
                 "note": "test"
               },
@@ -121,7 +121,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "transactionType": "TRANSFER",
-                "amount": "10",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
                 "homeTransactionId": "{$function.generic.generateUUID}",
                 "note": "test"
               }
