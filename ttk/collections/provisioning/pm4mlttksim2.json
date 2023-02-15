@@ -1,0 +1,54 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Add MSISDNs to ALS",
+      "fileInfo": {
+        "path": "collections/provisioning/pm4mlttksim2.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add TTKSIM2_MSISDN_1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+              "currency": "{$inputs.TTKSIM2_CURRENCY}"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "description": "Add TTKSIM2_MSISDN_2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+              "currency": "{$inputs.TTKSIM2_CURRENCY}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

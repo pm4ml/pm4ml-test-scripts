@@ -1,0 +1,72 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "P2P Transfer Happy Path",
+      "fileInfo": {
+        "path": "collections/golden_path/p2p-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send a transfer to PM4ML TTKSIM2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "abc123",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "USD",
+            "amount": "{$inputs.TTKSIM2_CURRENCY}",
+            "transactionType": "TRANSFER",
+            "note": "string"
+          }
+        },
+        {
+          "id": 2,
+          "description": "Send a transfer to PM4ML TTKSIM3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "abc123",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM3_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "USD",
+            "amount": "{$inputs.TTKSIM3_CURRENCY}",
+            "transactionType": "TRANSFER",
+            "note": "string"
+          }
+        }
+      ]
+    }
+  ]
+}
