@@ -1,0 +1,108 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "P2P Transfer Happy Path",
+      "fileInfo": {
+        "path": "collections/golden_path/p2p-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send a transfer to PM4ML TTKSIM2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "abc123",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.TTKSIM2_CURRENCY}",
+            "amount": "{$inputs.TRANSFER_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "string"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "currentState is completed",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Send a transfer to PM4ML TTKSIM3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "abc123",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM3_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.TTKSIM3_CURRENCY}",
+            "amount": "{$inputs.TRANSFER_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "string"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "currentState is completed",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

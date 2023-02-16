@@ -1,0 +1,236 @@
+{
+  "name": "Provision TTKSIM1",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Add MSISDNs to ALS",
+      "fileInfo": {
+        "path": "provisioning/pm4mlttksim1.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add MSISDNs to Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin",
+            "specFile": "spec_files/api_definitions/als_admin_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/als_admin_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/als_admin_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/als_admin_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/als_admin_1.1/trigger_templates"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "for(let i=0; i < 10; i++) {",
+                "  const msisdn = Number(pm.environment.get(\"TTKSIM1_MSISDN_PREFIX\") + '000000') + i",
+                "  const curDate = (new Date()).toUTCString()",
+                "  const alsAddParticipant = {",
+                "      url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/MSISDN' + '/' + msisdn,",
+                "      method: 'POST',",
+                "      header: {",
+                "          'FSPIOP-Source': pm.environment.get(\"TTKSIM1_FSPID\"),",
+                "          'Accept': 'application/vnd.interoperability.participants+json;version=1.0',",
+                "          'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',",
+                "          'Date': curDate",
+                "      },",
+                "      body: {",
+                "        mode: 'raw',",
+                "        raw: JSON.stringify({",
+                "          fspId: pm.environment.get(\"TTKSIM1_FSPID\"),",
+                "          currency: pm.environment.get(\"TTKSIM1_CURRENCY\")",
+                "        })",
+                "      }",
+                "  }",
+                "    ",
+                "  pm.sendRequest(alsAddParticipant, function (err, response) {",
+                "      console.log(msisdn + ' is added to oracle')",
+                "  });",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "TTKSIM1 Deposit Funds in Settlement Account",
+      "meta": {
+        "info": "TTKSIM1 Deposit Funds in Settlement Account"
+      },
+      "fileInfo": {
+        "path": "provisioning/pm4mlttksim1.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "description": "Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('TTKSIM1_CURRENCY')) {",
+                "    pm.environment.set(\"ttksim1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "description": "Deposit Funds in Settlement Account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts/{$environment.ttksim1SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}",
+            "id": "{$environment.ttksim1SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "ttktest",
+            "amount": {
+              "amount": "{$environment.ttksim1fundsInPrepareAmount}",
+              "currency": "{$inputs.TTKSIM1_CURRENCY}"
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmount', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "description": "Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.ttksim1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1SettlementAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('TTKSIM1_CURRENCY')) {",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "order": [
+    {
+      "name": "p2p-transfer.json",
+      "type": "file"
+    },
+    {
+      "name": "bulk-quotes-transfer.json",
+      "type": "file"
+    }
+  ]
+}
