@@ -63,6 +63,17 @@
                 "note": "test"
               }
             ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
           }
         },
         {
@@ -128,7 +139,18 @@
             ]
           },
           "url": null,
-          "disabled": false
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
         }
       ]
     }
