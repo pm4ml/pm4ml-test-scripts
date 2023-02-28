@@ -1,0 +1,72 @@
+{
+  "options": {},
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "sendmoney",
+      "fileInfo": {
+        "path": "send-money.json"
+      },
+      "meta": {
+        "info": "sendmoney"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "sendmoney",
+          "apiVersion": {
+            "minorVersion": 4,
+            "majorVersion": 1,
+            "type": "core_connector",
+            "prefix": "/cc-send",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/payment_manager_1.4/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/payment_manager_1.4/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/payment_manager_1.4/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/payment_manager_1.4/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/payment_manager_1.4/trigger_templates"
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.TTKSIM2_CURRENCY}",
+            "amount": "{$inputs.TRANSFER_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "string"
+          },
+          "url": "http://pm4mlttksim1-mojaloop-core-connector:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response Code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 1,
+                "description": "Response state is COMPLETED",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,722 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "TC-1. Happy Path for Bulk Quote & Transfer",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              },
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkTransfers",
+          "path": "/bulkTransfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "{$prev.1.request.body.homeTransactionId}",
+            "bulkQuoteId": "{$prev.1.request.body.bulkQuoteId}",
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[0].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[0].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[1].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[1].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              }
+            ]
+          },
+          "url": null,
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "TC-2. Test 400 for a Bulk Quote Bad Request.",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "123",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "blkqtbatchfailure"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Return Status Code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "TC-3. Test 500 for a error occured processing Bulk Quote request.",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "blkqtbatchfailure"
+              },
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "blkqtbatchfailure"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Return Status Code should be 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "TC-4. Test 504 for a timeout processing Bulk Quote request.",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "blkqtbatchtimesout"
+              },
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "blkqtbatchtimesout"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Return Status Code should be 504",
+                "exec": [
+                  "expect(response.status).to.equal(504)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "TC-5. Test 400, Bad Request for Bulk Transfer ",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              },
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkTransfers",
+          "path": "/bulkTransfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123",
+            "bulkQuoteId": "{$prev.1.request.body.bulkQuoteId}",
+            "bulkTransferId": "123",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[0].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[0].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[1].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[1].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              }
+            ]
+          },
+          "url": null,
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Status Text should be Bad Request",
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "TC-6. Test 500, server error for Bulk Transfer ",
+      "fileInfo": {
+        "path": "collections/golden_path/bulk-quotes-transfer.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post Quotes",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkQuotes",
+          "path": "/bulkQuotes",
+          "method": "post",
+          "url": null,
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualQuotes": [
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              },
+              {
+                "quoteId": "{$function.generic.generateUUID}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "transactionType": "TRANSFER",
+                "note": "test"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound"
+          },
+          "operationPath": "/bulkTransfers",
+          "path": "/bulkTransfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "{$prev.1.request.body.homeTransactionId}",
+            "bulkQuoteId": "1889263b-de2f-43ce-9162-31057d81ea44",
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "type": "CONSUMER",
+              "displayName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME} {$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+              "middleName": "Something",
+              "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}",
+              "fspId": "{$inputs.TTKSIM1_FSPID}"
+            },
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[0].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[0].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "ilpPacket": "{$prev.1.response.body.individualQuoteResults[1].ilpPacket}",
+                "condition": "{$prev.1.response.body.individualQuoteResults[1].condition}",
+                "to": {
+                  "type": "CONSUMER",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.TTKSIM2_MSISDN_2}",
+                  "fspId": "{$inputs.TTKSIM2_FSPID}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "transactionType": "TRANSFER",
+                "amount": "{$inputs.TRANSFER_AMOUNT}",
+                "homeTransactionId": "{$function.generic.generateUUID}",
+                "note": "test"
+              }
+            ]
+          },
+          "url": null,
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Status text is Internal Server Error",
+                "exec": [
+                  "expect(response.statusText).to.equal('Internal Server Error')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
